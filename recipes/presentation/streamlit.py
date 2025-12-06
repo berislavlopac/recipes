@@ -28,14 +28,12 @@ def save_uploaded_file(uploaded_file) -> Path | None:
     img = enhancer.enhance(1.5)
 
     file_path = Path(tempfile.gettempdir()) / f"ingredients_{uuid7().hex}.jpg"
-
-    with file_path.open(mode="wb") as tmp_file:
-        img.save(file_path, quality=95)
+    img.save(file_path, quality=95)
 
     return Path(file_path)
 
 
-def webform():  # noqa: C901
+def webform():  # noqa: C901, PLR0912, PLR0915
     st.title("👨‍🍳 BB Vision Chef")
 
     with st.sidebar:
@@ -70,7 +68,7 @@ def webform():  # noqa: C901
 
                     try:
                         flow.kickoff()
-                    except Exception as e:  # noqa: BLE001
+                    except Exception as e:
                         st.error(f"Flow Error: {e}")
                         if settings.DEBUG:
                             raise

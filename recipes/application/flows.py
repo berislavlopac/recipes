@@ -4,10 +4,10 @@ from crewai import Crew, CrewOutput, Task
 from crewai.flow.flow import Flow, listen, start
 from pydantic import BaseModel
 
-from recipes.application.agents import ChefAgent, IngredientScoutAgent
+from recipes.application import agents
 from recipes.application.config import settings
 from recipes.domain.models import IngredientList, RecipeBook
-from recipes.infrastructure.llm_factory import get_reasoning_model, get_vision_model
+from recipes.infrastructure import reasoning, vision
 
 
 class RecipeState(BaseModel):
@@ -28,8 +28,8 @@ class RecipeGenerationFlow(Flow[RecipeState]):
         print(f"🤖 Analyzing image: {self.state.image_path}")
 
         # 1. Inject Infrastructure (Scout Agent)
-        llm = get_vision_model()
-        agent = IngredientScoutAgent(llm).create()
+        llm = vision.get_model()
+        agent = agents.create_food_analyst(llm)
 
         # 2. Define Vision Task
         # Gemini handles the image processing natively via the 'images' arg
@@ -66,8 +66,8 @@ class RecipeGenerationFlow(Flow[RecipeState]):
         print("🤖 Cooking recipes...")
 
         # 1. Inject Infrastructure
-        llm = get_reasoning_model()
-        agent = ChefAgent(llm).create()
+        llm = reasoning.get_model()
+        agent = agents.create_chef(llm)
 
         # 2. Context
         ing_list = [i.name for i in ingredients_data.ingredients]

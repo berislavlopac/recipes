@@ -1,6 +1,5 @@
-import os
 from pathlib import Path
-from typing import Annotated, Type
+from typing import Annotated
 
 import google.generativeai as genai
 import ollama
@@ -27,7 +26,7 @@ class Gemini3VisionTool(BaseTool):
             return "Error: File not found."
         img = PIL.Image.open(image_path)
         genai.configure(api_key=settings.GEMINI_API_KEY)
-        model = genai.GenerativeModel(settings.VISION_MODEL)
+        model = genai.GenerativeModel(settings.VISION_GEMINI_MODEL)
         try:
             response = model.generate_content([query, img])
         except Exception as e:  # noqa: BLE001
@@ -50,11 +49,11 @@ class LocalVisionTool(BaseTool):
             # Ollama expects the image path directly in the 'images' list
             # It handles the base64 conversion internally if you pass a path.
             response = ollama.chat(
-                model="llama3.2-vision",
+                model=settings.VISION_LOCAL_MODEL,
                 messages=[{"role": "user", "content": query, "images": [image_path]}],
             )
 
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001
             return f"Local Inference Error: {e}"
         else:
             # Extract the content from the response
