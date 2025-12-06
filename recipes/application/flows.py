@@ -1,4 +1,6 @@
-from crewai import Crew, Task
+from typing import cast
+
+from crewai import Crew, CrewOutput, Task
 from crewai.flow.flow import Flow, listen, start
 from pydantic import BaseModel
 
@@ -21,41 +23,54 @@ class RecipeGenerationFlow(Flow[RecipeState]):
         self.state.user_preferences = user_preferences
 
     @start()
-    def analyze_image(self):
-        print(f"🤖 Gemini Flash analyzing: {self.state.image_path}")
+    def analyze_image(self) -> IngredientList:
+        print(f"🤖 Analyzing image: {self.state.image_path}")
 
-        # 1. Inject Infrastructure (Gemini Flash)
+        # 1. Inject Infrastructure (Scout Agent)
         llm = get_vision_model()
         agent = IngredientScoutAgent(llm).create()
 
         # 2. Define Vision Task
         # Gemini handles the image processing natively via the 'images' arg
         task = Task(
-            description="Look at the image and output a structured list of every food ingredient you see.",
-            expected_output="JSON structure of ingredients.",
+            description=(
+                f"Use the 'Gemini Vision Tool' to analyze the image file located at: '{self.state.image_path}'.\n"
+                "Analyze the provided image using this step-by-step process:\n"
+                "1. Briefly describe the scene and lighting to yourself.\n"
+                "2. Scan the image from left to right.\n"
+                "3. If text is visible on jars/cans, read it to confirm the item.\n"
+                "4. List every edible ingredient found.\n"
+                "5. Note the condition (fresh, opened, ripe) of the items."
+            ),
+            expected_output="A structured JSON list of verified ingredients.",
             agent=agent,
             output_pydantic=IngredientList,
-            images=[self.state.image_path],
         )
 
         # 3. Execute
-        crew = Crew(agents=[agent], tasks=[task])
-        result = crew.kickoff()
+        crew = Crew(
+            agents=[agent],
+            tasks=[task],
+            verbose=True,
+            memory=False,
+            cache=False,
+        )
+        result = cast(CrewOutput, crew.kickoff())
 
-        self.state.detected_ingredients = result.pydantic
-        return result.pydantic
+        self.state.detected_ingredients = cast(IngredientList, result.pydantic)
+        return self.state.detected_ingredients
 
     @listen(analyze_image)
-    def generate_recipes(self, ingredients_data):
-        print("🤖 Gemini Pro cooking recipes...")
+    def generate_recipes(self, ingredients_data: IngredientList) -> RecipeBook:
+        print("🤖 Cooking recipes...")
 
-        # 1. Inject Infrastructure (Gemini Pro)
+        # 1. Inject Infrastructure
         llm = get_reasoning_model()
         agent = ChefAgent(llm).create()
 
         # 2. Context
-        ing_list = [i.name for i in self.state.detected_ingredients.ingredients]
-        notes = self.state.detected_ingredients.notes or "None"
+        ing_list = [i.name for i in ingredients_data.ingredients]
+        notes = ingredients_data.notes or "None"
 
         # 3. Define Reasoning Task
         task = Task(
@@ -72,7 +87,7 @@ class RecipeGenerationFlow(Flow[RecipeState]):
 
         # 4. Execute
         crew = Crew(agents=[agent], tasks=[task])
-        result = crew.kickoff()
+        result = cast(CrewOutput, crew.kickoff())
 
-        self.state.final_recipes = result.pydantic
-        return result.pydantic
+        self.state.final_recipes = cast(RecipeBook, result.pydantic)
+        return self.state.final_recipes

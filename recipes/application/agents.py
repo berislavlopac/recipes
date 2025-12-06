@@ -1,5 +1,7 @@
 from crewai import Agent
 
+from recipes.infrastructure.tools import Gemini3VisionTool
+
 
 class IngredientScoutAgent:
     def __init__(self, llm):
@@ -16,6 +18,7 @@ class IngredientScoutAgent:
                 "You ignore non-food items like plates, counters, or cutlery."
             ),
             llm=self.llm,
+            tools=[Gemini3VisionTool()],
             max_iter=1,  # Vision tasks usually only need one pass
             allow_delegation=False,
             verbose=True,

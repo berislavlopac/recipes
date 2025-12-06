@@ -6,6 +6,7 @@ readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
     "crewai[google-genai]>=1.6.1",
+    "google-generativeai>=0.8.5",
     "pillow>=12.0.0",
     "pydantic>=2.12.5",
     "pydantic-settings>=2.12.0",
@@ -93,7 +94,6 @@ external = [
 [tool.ruff.lint.isort]
 # see https://docs.astral.sh/ruff/settings/#lintisort
 known-first-party = ["email_ingestion"]
-force-sort-within-sections = true
 
 [tool.ruff.lint.pylint]
 max-args = 6
