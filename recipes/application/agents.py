@@ -1,7 +1,7 @@
 from crewai import Agent
 
 from recipes.application.config import settings
-from recipes.infrastructure.tools.gemini import Gemini3VisionTool
+from recipes.infrastructure.tools.vision import Gemini3VisionTool
 
 
 class IngredientScoutAgent:
