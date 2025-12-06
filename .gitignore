@@ -201,3 +201,6 @@ profile.stats
 
 # logfire
 .logfire/
+
+# local files
+secrets/

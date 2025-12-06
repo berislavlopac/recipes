@@ -36,7 +36,7 @@ def save_uploaded_file(uploaded_file) -> Path | None:
 
 
 def webform():  # noqa: C901
-    st.title("🧑‍🍳 Brightbeam Vision Chef")
+    st.title("👨‍🍳 Brightbeam Vision Chef")
 
     with st.sidebar:
         st.header("Settings")
