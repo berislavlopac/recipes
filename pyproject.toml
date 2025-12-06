@@ -24,7 +24,6 @@ dev = [
 
 [tool.uv]
 package = false
-default-groups = "all"
 
 [tool.pytest.ini_options]
 minversion = "6.0"
