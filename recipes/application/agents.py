@@ -1,5 +1,6 @@
 from crewai import Agent
 
+from recipes.application.config import settings
 from recipes.infrastructure.tools import Gemini3VisionTool
 
 
@@ -21,7 +22,7 @@ class IngredientScoutAgent:
             tools=[Gemini3VisionTool()],
             max_iter=1,  # Vision tasks usually only need one pass
             allow_delegation=False,
-            verbose=True,
+            verbose=settings.DEBUG,
         )
 
 
@@ -40,5 +41,5 @@ class ChefAgent:
             ),
             llm=self.llm,
             allow_delegation=False,
-            verbose=True,
+            verbose=settings.DEBUG,
         )

@@ -5,6 +5,7 @@ from crewai.flow.flow import Flow, listen, start
 from pydantic import BaseModel
 
 from recipes.application.agents import ChefAgent, IngredientScoutAgent
+from recipes.application.config import settings
 from recipes.domain.models import IngredientList, RecipeBook
 from recipes.infrastructure.llm_factory import get_reasoning_model, get_vision_model
 
@@ -51,7 +52,7 @@ class RecipeGenerationFlow(Flow[RecipeState]):
         crew = Crew(
             agents=[agent],
             tasks=[task],
-            verbose=True,
+            verbose=settings.DEBUG,
             memory=False,
             cache=False,
         )
@@ -86,7 +87,7 @@ class RecipeGenerationFlow(Flow[RecipeState]):
         )
 
         # 4. Execute
-        crew = Crew(agents=[agent], tasks=[task])
+        crew = Crew(agents=[agent], tasks=[task], verbose=settings.DEBUG)
         result = cast(CrewOutput, crew.kickoff())
 
         self.state.final_recipes = cast(RecipeBook, result.pydantic)
