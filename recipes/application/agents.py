@@ -7,12 +7,13 @@ class IngredientScoutAgent:
 
     def create(self) -> Agent:
         return Agent(
-            role="Vision Ingredient Analyst",
-            goal="Identify raw food ingredients from images with high precision.",
+            role="Forensic Food Analyst",
+            goal="Analyze food images with extreme precision, reading labels and identifying produce state.",
             backstory=(
-                "You are a Google Gemini-powered vision expert. "
-                "You can see details in images that others miss. "
-                "You list exactly what is physically present in the photo."
+                "You are a meticulous inventory specialist. "
+                "You do not guess. If a label is visible, you read it to confirm the ingredient. "
+                "You distinguish between fresh produce (e.g., 'Roma Tomato') and packaged goods. "
+                "You ignore non-food items like plates, counters, or cutlery."
             ),
             llm=self.llm,
             max_iter=1,  # Vision tasks usually only need one pass

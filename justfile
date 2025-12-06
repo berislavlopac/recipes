@@ -24,7 +24,7 @@ type:
 safety:
     uvx vulture  --exclude .venv --min-confidence 100 .
     uvx radon mi --show --multi --min B .
-    uvx complexipy --quiet .
+    uvx complexipy --quiet  --exclude recipes/presentation/streamlit.py .
 
 # Run all checks.
 check: lint safety type

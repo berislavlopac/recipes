@@ -10,6 +10,10 @@ class Ingredient(BaseModel):
 
 
 class IngredientList(BaseModel):
+    image_description: Annotated[
+        str,
+        Field(description="First, describe the image scene in detail to confirm you see it."),
+    ]
     ingredients: list[Ingredient]
     notes: Annotated[
         str | None, Field(description="Any observations about freshness or state")

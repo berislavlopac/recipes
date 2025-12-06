@@ -10,11 +10,11 @@ class Settings(BaseSettings):
     DEBUG: bool = False
 
     # ingredients recognition settings
-    VISION_MODEL: str = "gemini/gemini-2.5-flash"
-    VISION_TEMPERATURE: float = 0.1  # Low temp for factual object detection
+    VISION_MODEL: str = "gemini/gemini-3-pro-preview"
+    VISION_TEMPERATURE: float = 0.0  # Low temp for factual object detection
 
     # recipe generation settings
-    REASONING_MODEL: str = "gemini/gemini-3.0-pro"
+    REASONING_MODEL: str = "gemini/gemini-3-pro-preview"
     REASONING_TEMPERATURE: float = 0.8  # Higher temp for creativity
 
 
