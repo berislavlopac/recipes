@@ -8,7 +8,7 @@ from uuid_utils import uuid7
 from recipes.application.config import settings
 from recipes.application.flows import RecipeGenerationFlow
 
-st.set_page_config(page_title="Brightbeam Vision Chef", page_icon=":man_cook:", layout="wide")
+st.set_page_config(page_title="BB Vision Chef", page_icon=":man_cook:", layout="wide")
 
 
 def save_uploaded_file(uploaded_file) -> Path | None:
@@ -36,7 +36,7 @@ def save_uploaded_file(uploaded_file) -> Path | None:
 
 
 def webform():  # noqa: C901
-    st.title("👨‍🍳 Brightbeam Vision Chef")
+    st.title("👨‍🍳 BB Vision Chef")
 
     with st.sidebar:
         st.header("Settings")

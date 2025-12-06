@@ -1,6 +1,6 @@
-# 👨‍🍳 Brightbeam Vision Chef
+# 👨‍🍳 BB Vision Chef
 
-These are the notes about the solution for the technical task for Brightbeam.
+These are the notes about the solution for the technical task.
 
 ## Implementation Choices
 
