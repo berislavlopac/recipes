@@ -72,7 +72,10 @@ def webform():  # noqa: C901
                         flow.kickoff()
                     except Exception as e:  # noqa: BLE001
                         st.error(f"Flow Error: {e}")
-                        st.stop()
+                        if settings.DEBUG:
+                            raise
+                        else:
+                            st.stop()
                     else:
                         detected = flow.state.detected_ingredients
                         recipes = flow.state.final_recipes
