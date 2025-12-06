@@ -39,3 +39,7 @@ uv run streamlit run main.py
 
 This will install all the requirements in a Python virtual environment and execute the application locally.
 
+### Online Deployment
+
+The solution is also deployed online, and can be accessed at https://bl-bb-recipes.streamlit.app
+
