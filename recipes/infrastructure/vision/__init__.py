@@ -1,4 +1,5 @@
 import os
+
 from crewai import LLM
 from crewai.tools import BaseTool
 
@@ -8,7 +9,7 @@ from . import tools
 
 
 def get_model() -> LLM:
-    if settings.USE_LOCAL_MODELS:
+    if settings.VISION_USE_LOCAL_MODEL:
         os.environ["OPENAI_API_KEY"] = "NA"
         return LLM(
             temperature=settings.VISION_TEMPERATURE,
@@ -25,7 +26,7 @@ def get_model() -> LLM:
 
 
 def get_tool() -> BaseTool:
-    if settings.USE_LOCAL_MODELS:
-        return tools.LocalVisionTool()
+    if settings.VISION_USE_LOCAL_MODEL:
+        return tools.OllamaVisionTool()
     else:
         return tools.Gemini3VisionTool()

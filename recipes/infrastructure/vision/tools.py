@@ -35,26 +35,43 @@ class Gemini3VisionTool(BaseTool):
             return response.text
 
 
-class LocalVisionTool(BaseTool):
-    name: str = "Local Vision Tool"
-    description: str = "Analyzes images using a local Vision model."
+class OllamaVisionTool(BaseTool):
+    name: str = "Ollama Vision Tool"
+    description: str = "Analyzes images using a local Ollama model."
     args_schema: type[BaseModel] = VisionToolInput
+
+    @property
+    def model_name(self):
+        model_name = settings.VISION_LOCAL_MODEL
+        if "/" in model_name:
+            _, model_name = model_name.rsplit("/", maxsplit=1)
+        return model_name
 
     def _run(self, image_path: Path | str, query: str) -> str:
         image_path = Path(image_path)
         if not image_path.exists():
-            return "Error: File not found."
-
+            return f"Error: Image file not found: {image_path}"
+        client = ollama.Client(host=settings.VISION_LOCAL_URL)
         try:
-            # Ollama expects the image path directly in the 'images' list
-            # It handles the base64 conversion internally if you pass a path.
-            response = ollama.chat(
-                model=settings.VISION_LOCAL_MODEL,
+            stream = client.chat(
+                model=self.model_name,
                 messages=[{"role": "user", "content": query, "images": [image_path]}],
+                stream=True,
+                options={
+                    "num_predict": settings.VISION_HARD_STOP,
+                    "temperature": settings.VISION_TEMPERATURE,
+                    "repeat_penalty": 1.2,  # Penalizes repeating the same tokens.
+                    "top_p": 0.9,  # Slightly restrict the token choices.
+                },
             )
-
         except Exception as e:  # noqa: BLE001
-            return f"Local Inference Error: {e}"
+            return f"Error processing image with Ollama: {e}"
         else:
-            # Extract the content from the response
-            return response["message"]["content"]
+            full_response = ""
+            for chunk in stream:
+                content = chunk["message"]["content"]
+                if settings.DEBUG:
+                    print(content, end="", flush=True)
+                full_response += content
+
+            return full_response

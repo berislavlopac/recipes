@@ -4,7 +4,7 @@ from recipes.application.config import settings
 
 
 def get_model() -> LLM:
-    if settings.USE_LOCAL_MODELS:
+    if settings.REASONING_USE_LOCAL_MODEL:
         return LLM(
             temperature=settings.REASONING_TEMPERATURE,
             model=settings.REASONING_LOCAL_MODEL,

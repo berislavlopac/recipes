@@ -7,7 +7,7 @@ requires-python = ">=3.13"
 dependencies = [
     "crewai[google-genai]>=1.6.1",
     "google-generativeai>=0.8.5",
-    "litellm>=1.80.7",
+    "litellm>=1.80.8",
     "ollama>=0.6.1",
     "pillow>=12.0.0",
     "pydantic>=2.12.5",
@@ -108,8 +108,7 @@ max-args = 6
 # to be opt-out in the future.
 docstring-code-format = false
 
-#[tool.deptry.per_rule_ignores]
-#DEP002 = [
-#    "uvicorn",
-#    "aiosqlite",
-#]
+[tool.deptry.per_rule_ignores]
+DEP002 = [
+    "litellm",
+]

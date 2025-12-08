@@ -35,7 +35,7 @@ class RecipeGenerationFlow(Flow[RecipeState]):
         # Gemini handles the image processing natively via the 'images' arg
         task = Task(
             description=(
-                f"Use the 'Gemini Vision Tool' to analyze the image file located at: '{self.state.image_path}'.\n"
+                f"Use the agent's vision too to analyze the image file located at: '{self.state.image_path}'.\n"
                 "Analyze the provided image using this step-by-step process:\n"
                 "1. Briefly describe the scene and lighting to yourself.\n"
                 "2. Scan the image from left to right.\n"
