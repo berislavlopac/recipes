@@ -11,7 +11,7 @@ These are the notes about the solution for the technical task.
 
 ## Other Considerations:
 
-* AI Development Workflow: While I occasionally use the Gemini plugin for Pycharm, I prefer an "offline" workflow, where the coding conversation is happening in a separate Gemini AI Studio instance, with the code copied over to the IDE manually, and modified as necessary. While Gemini (especially 3 Pro) has proven as a good assistant, it's still using quite an outdated syntax. The system instructions prompt that was used for this conversation can be found in the [GEMINI.md](GEMINI.md) file.
+* **AI Development Workflow:** While I occasionally use the Gemini plugin for Pycharm, I prefer an "offline" workflow, where the coding conversation is happening in a separate Gemini AI Studio instance, with the code copied over to the IDE manually, and modified as necessary. While Gemini (especially 3 Pro) has proven as a good assistant, it's still using quite an outdated syntax. The system instructions prompt that was used for this conversation can be found in the [GEMINI.md](GEMINI.md) file.
 
 ## Using the Solution
 
@@ -23,15 +23,31 @@ As a first step, ensure that your Gemini API key is configured properly. For tha
 mkdir secrets && echo [your-gemini-api-key] > "secrets/recipes_gemini_api_key"
 ```
 
-There are a few other settings that can be configured using the following variables (which can be set either on the environment, or in an `.env`) file:
+There is a number of other settings that can be configured using environment variables (or in the `.env` file).
+
+Common settings:
 
 * `RECIPES_DEBUG: bool = False`
-* `RECIPES_VISION_MODEL: str = "gemini-3-pro-preview"`
-* `RECIPES_VISION_TEMPERATURE: float = 0.0`
-* `RECIPES_REASONING_MODEL: str = "gemini/gemini-3-pro-preview"` 
-* `RECIPES_REASONING_TEMPERATURE: float = 0.8`
+* `RECIPES_VISION_TEMPERATURE: float = 0.2`
+* `RECIPES_REASONING_TEMPERATURE: float = 0.8  # Higher temp for creativity`
 
-Once the API key is configured, run this command:
+Settings for Gemini models: 
+
+* `RECIPES_VISION_GEMINI_MODEL: str = "gemini-3-pro-preview"`
+* `RECIPES_REASONING_GEMINI_MODEL: str = "gemini/gemini-3-pro-preview"`
+
+Settings specifically for using local LLMs:
+
+* `RECIPES_VISION_USE_LOCAL_MODEL: bool = False`
+* `RECIPES_VISION_LOCAL_MODEL: str = "ollama/llama3.2-vision"`
+* `RECIPES_VISION_LOCAL_URL: str = "http://localhost:11434"`
+* `RECIPES_VISION_HARD_STOP: int = 1000`
+* `RECIPES_REASONING_USE_LOCAL_MODEL: bool = False`
+* `RECIPES_REASONING_LOCAL_MODEL: str = "ollama/llama3.1"`
+* `RECIPES_REASONING_LOCAL_URL: str = "http://localhost:11434"`
+
+
+Once the API key and any other variables are configured, run this command:
 
 ```shell
 uv run streamlit run main.py 
