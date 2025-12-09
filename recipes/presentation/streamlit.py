@@ -7,6 +7,7 @@ from uuid_utils import uuid7
 
 from recipes.application.config import settings
 from recipes.application.flows import RecipeGenerationFlow
+from recipes.infrastructure import reasoning, vision
 
 st.set_page_config(page_title="BB Vision Chef", page_icon=":man_cook:", layout="wide")
 
@@ -63,7 +64,10 @@ def webform():  # noqa: C901, PLR0912, PLR0915
                         status_label += f" - {image_path}"
                     st.write(status_label)
                     flow = RecipeGenerationFlow(
-                        image_path=str(image_path), user_preferences=preferences or "None."
+                        image_path=str(image_path),
+                        user_preferences=preferences or "None.",
+                        vision_llm=vision.get_model(),
+                        reasoning_llm=reasoning.get_model(),
                     )
 
                     try:

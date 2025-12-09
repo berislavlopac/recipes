@@ -20,13 +20,20 @@ class Gemini3VisionTool(BaseTool):
     description: str = "Analyzes images using the latest Gemini 3 model."
     args_schema: type[BaseModel] = VisionToolInput
 
+    @property
+    def model_name(self):
+        model_name = settings.VISION_GEMINI_MODEL
+        if "/" in model_name:
+            _, model_name = model_name.rsplit("/", maxsplit=1)
+        return model_name
+
     def _run(self, image_path: Path | str, query: str) -> str:
         image_path = Path(image_path)
         if not image_path.exists():
             return "Error: File not found."
         img = PIL.Image.open(image_path)
         genai.configure(api_key=settings.GEMINI_API_KEY)
-        model = genai.GenerativeModel(settings.VISION_GEMINI_MODEL)
+        model = genai.GenerativeModel(self.model_name)
         try:
             response = model.generate_content([query, img])
         except Exception as e:  # noqa: BLE001

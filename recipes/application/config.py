@@ -10,8 +10,9 @@ class Settings(BaseSettings):
     DEBUG: bool = False
 
     # ingredients recognition settings
-    VISION_TEMPERATURE: float = 0.2  # Low temp for factual object detection
-    VISION_GEMINI_MODEL: str = "gemini-3-pro-preview"
+    VISION_TEMPERATURE: float = 0.2
+    """Low temp for factual object detection."""
+    VISION_GEMINI_MODEL: str = "gemini/gemini-3-pro-preview"
     VISION_USE_LOCAL_MODEL: bool = False
     VISION_LOCAL_MODEL: str = "ollama/llama3.2-vision"
     VISION_LOCAL_URL: str = "http://localhost:11434"
@@ -19,7 +20,10 @@ class Settings(BaseSettings):
     """Maximum number of tokens generated. Prevents infinite hanging."""
 
     # recipe generation settings
-    REASONING_TEMPERATURE: float = 0.8  # Higher temp for creativity
+    COUNT: int = 3
+    """Number of recipes to generate."""
+    REASONING_TEMPERATURE: float = 0.8
+    """Higher temp for creativity."""
     REASONING_GEMINI_MODEL: str = "gemini/gemini-3-pro-preview"
     REASONING_USE_LOCAL_MODEL: bool = False
     REASONING_LOCAL_MODEL: str = "ollama/llama3.1"

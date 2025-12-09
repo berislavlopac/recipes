@@ -15,7 +15,7 @@ These are the notes about the solution for the technical task.
 
 ## Using the Solution
 
-### Local Execution
+### Configuration
 
 As a first step, ensure that your Gemini API key is configured properly. For that, run this shell command from the top directory of the solution:
 
@@ -23,13 +23,14 @@ As a first step, ensure that your Gemini API key is configured properly. For tha
 mkdir secrets && echo [your-gemini-api-key] > "secrets/recipes_gemini_api_key"
 ```
 
-There is a number of other settings that can be configured using environment variables (or in the `.env` file).
+There is a number of other settings that can be configured using environment variables (or in the `.env` file). The available variables are listed below, along with their default values.
 
 Common settings:
 
 * `RECIPES_DEBUG: bool = False`
+* `RECIPES_COUNT: int = 3`
 * `RECIPES_VISION_TEMPERATURE: float = 0.2`
-* `RECIPES_REASONING_TEMPERATURE: float = 0.8  # Higher temp for creativity`
+* `RECIPES_REASONING_TEMPERATURE: float = 0.8`
 
 Settings for Gemini models: 
 
@@ -46,6 +47,7 @@ Settings specifically for using local LLMs:
 * `RECIPES_REASONING_LOCAL_MODEL: str = "ollama/llama3.1"`
 * `RECIPES_REASONING_LOCAL_URL: str = "http://localhost:11434"`
 
+### Local Execution
 
 Once the API key and any other variables are configured, run this command:
 
@@ -58,4 +60,3 @@ This will install all the requirements in a Python virtual environment and execu
 ### Online Deployment
 
 The solution is also deployed online, and can be accessed at https://bl-bb-recipes.streamlit.app
-

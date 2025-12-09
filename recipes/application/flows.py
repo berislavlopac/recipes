@@ -1,11 +1,12 @@
 from typing import cast
 
-from crewai import Crew, CrewOutput, Task
+from crewai import LLM, Crew, Task
 from crewai.flow.flow import Flow, listen, start
 from pydantic import BaseModel
 
 from recipes.application import agents
 from recipes.application.config import settings
+from recipes.application.tasks import get_reasoning_task, get_vision_task
 from recipes.domain.models import IngredientList, RecipeBook
 from recipes.infrastructure import reasoning, vision
 
@@ -18,35 +19,24 @@ class RecipeState(BaseModel):
 
 
 class RecipeGenerationFlow(Flow[RecipeState]):
-    def __init__(self, image_path: str, user_preferences: str):
+    def __init__(
+        self, image_path: str, user_preferences: str, vision_llm: LLM, reasoning_llm: LLM
+    ):
         super().__init__()
         self.state.image_path = image_path
         self.state.user_preferences = user_preferences
+        self.vision_llm = vision_llm
+        self.reasoning_llm = reasoning_llm
 
     @start()
     def analyze_image(self) -> IngredientList:
         print(f"🤖 Analyzing image: {self.state.image_path}")
 
         # 1. Inject Infrastructure (Scout Agent)
-        llm = vision.get_model()
-        agent = agents.create_food_analyst(llm)
+        agent = agents.create_food_analyst(self.vision_llm)
 
         # 2. Define Vision Task
-        # Gemini handles the image processing natively via the 'images' arg
-        task = Task(
-            description=(
-                f"Use the agent's vision too to analyze the image file located at: '{self.state.image_path}'.\n"
-                "Analyze the provided image using this step-by-step process:\n"
-                "1. Briefly describe the scene and lighting to yourself.\n"
-                "2. Scan the image from left to right.\n"
-                "3. If text is visible on jars/cans, read it to confirm the item.\n"
-                "4. List every edible ingredient found.\n"
-                "5. Note the condition (fresh, opened, ripe) of the items."
-            ),
-            expected_output="A structured JSON list of verified ingredients.",
-            agent=agent,
-            output_pydantic=IngredientList,
-        )
+        task = get_vision_task(self.state.image_path, agent)
 
         # 3. Execute
         crew = Crew(
@@ -56,9 +46,9 @@ class RecipeGenerationFlow(Flow[RecipeState]):
             memory=False,
             cache=False,
         )
-        result = cast(CrewOutput, crew.kickoff())
+        result = crew.kickoff()
 
-        self.state.detected_ingredients = cast(IngredientList, result.pydantic)
+        self.state.detected_ingredients = cast(IngredientList, result.pydantic)  # type: ignore [union-attr]
         return self.state.detected_ingredients
 
     @listen(analyze_image)
@@ -66,29 +56,14 @@ class RecipeGenerationFlow(Flow[RecipeState]):
         print("🤖 Cooking recipes...")
 
         # 1. Inject Infrastructure
-        llm = reasoning.get_model()
-        agent = agents.create_chef(llm)
+        agent = agents.create_chef(self.reasoning_llm)
 
-        # 2. Context
-        ing_list = [i.name for i in ingredients_data.ingredients]
-        notes = ingredients_data.notes or "None"
+        # 2. Define Reasoning Task
+        task = get_reasoning_task(ingredients_data, self.state.user_preferences, agent)
 
-        # 3. Define Reasoning Task
-        task = Task(
-            description=(
-                f"Ingredients available: {ing_list}. "
-                f"Notes on condition: {notes}. "
-                f"User Preferences: '{self.state.user_preferences}'. "
-                "Suggest 3 recipes. You may assume salt, pepper, and oil are available."
-            ),
-            expected_output="Detailed recipes in JSON format.",
-            agent=agent,
-            output_pydantic=RecipeBook,
-        )
-
-        # 4. Execute
+        # 3. Execute
         crew = Crew(agents=[agent], tasks=[task], verbose=settings.DEBUG)
-        result = cast(CrewOutput, crew.kickoff())
+        result = crew.kickoff()
 
-        self.state.final_recipes = cast(RecipeBook, result.pydantic)
+        self.state.final_recipes = cast(RecipeBook, result.pydantic)  # type: ignore [union-attr]
         return self.state.final_recipes
