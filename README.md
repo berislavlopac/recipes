@@ -60,3 +60,10 @@ This will install all the requirements in a Python virtual environment and execu
 ### Online Deployment
 
 The solution is also deployed online, and can be accessed at https://bl-bb-recipes.streamlit.app
+
+
+## Note on Testing
+
+Because all the agents and tasks in the solution directly depend on LLMs, it was somewhat tricky to set up a good testing configuration. I started exploring mocking LLMs to at least try testing the basic flow execution, but ran out of time.
+
+Given more time I would have also explored setting up some evals to check the quality of the results.
