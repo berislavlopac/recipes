@@ -64,6 +64,19 @@ The solution is also deployed online, and can be accessed at https://bl-bb-recip
 
 ## Note on Testing
 
-Because all the agents and tasks in the solution directly depend on LLMs, it was somewhat tricky to set up a good testing configuration. I started exploring mocking LLMs to at least try testing the basic flow execution, but ran out of time.
+Taking advantage of the extra time provided by rescheduling the interview, I have added some unit tests, primarily for the `application` layer, as well as for the tools in the `infrastructure` layer. I have used Gemini Code Assist tool, which built the tests that covered most of the required code, with only minimal manual updates necessary.
 
-Given more time I would have also explored setting up some evals to check the quality of the results.
+The `presentation` layer was refactored to move the image enhancement function to a separate module, which is now tested separately from the rest of the UI code.
+
+Gemini suggested that the rest of the infrastructure layer doesn't need to be tested, with the following reasoning, which I agree with:
+
+### Why This Code Isn't Typically Unit Tested
+
+While we could technically test these functions by mocking the settings object and asserting that the LLM constructor is called with the correct parameters, it's generally not worth the effort for a few key reasons:
+
+1. **No Logic, Only Configuration:** These functions contain no business logic. Their sole purpose is to read from a configuration object and pass those values to a constructor. A test would simply mirror the implementation, providing very little value.
+2. **Tightly Coupled to Frameworks:** The test would be tightly coupled to the signature of the `crewai.LLM` constructor. If the library changes, the test breaks, even if our application's behaviour is still correct.
+3. **Better Tested Implicitly:** The functionality of these factories is implicitly tested by the higher-level tests we've already written. For example, in `test_recipe_generation_flow_full_run`, we pass in a `mock_llm`. In a real scenario, that `mock_llm` would be an object created by one of these factory functions. The flow test ensures that as long as a valid LLM object is provided, the flow works.
+
+In summary, the remaining infrastructure code acts as the "glue" that assembles the application at its entry point. It's part of the composition root, and its correctness is best verified through integration testing rather than unit testing.
+

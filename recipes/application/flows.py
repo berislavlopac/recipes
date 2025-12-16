@@ -1,6 +1,6 @@
 from typing import cast
 
-from crewai import LLM, Crew, Task
+from crewai import LLM, Crew
 from crewai.flow.flow import Flow, listen, start
 from pydantic import BaseModel
 
@@ -8,7 +8,6 @@ from recipes.application import agents
 from recipes.application.config import settings
 from recipes.application.tasks import get_reasoning_task, get_vision_task
 from recipes.domain.models import IngredientList, RecipeBook
-from recipes.infrastructure import reasoning, vision
 
 
 class RecipeState(BaseModel):

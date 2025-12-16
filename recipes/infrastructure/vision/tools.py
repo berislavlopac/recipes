@@ -1,10 +1,10 @@
 from pathlib import Path
 from typing import Annotated
 
-import google.generativeai as genai
 import ollama
 import PIL.Image
 from crewai.tools import BaseTool
+from google import genai
 from pydantic import BaseModel, Field
 
 from recipes.application.config import settings
@@ -32,14 +32,16 @@ class Gemini3VisionTool(BaseTool):
         if not image_path.exists():
             return "Error: File not found."
         img = PIL.Image.open(image_path)
-        genai.configure(api_key=settings.GEMINI_API_KEY)
-        model = genai.GenerativeModel(self.model_name)
+        client = genai.Client(api_key=settings.GEMINI_API_KEY)
         try:
-            response = model.generate_content([query, img])
+            response = client.models.generate_content(
+                model=self.model_name,
+                contents=[query, img],  # type: ignore [arg-type]
+            )
         except Exception as e:  # noqa: BLE001
             return f"Vision Error: {e}"
         else:
-            return response.text
+            return response.text or ""
 
 
 class OllamaVisionTool(BaseTool):

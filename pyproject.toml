@@ -6,7 +6,7 @@ readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
     "crewai[google-genai]>=1.6.1",
-    "google-generativeai>=0.8.5",
+    "google-genai>=1.55.0",
     "litellm>=1.80.8",
     "ollama>=0.6.1",
     "pillow>=12.0.0",
@@ -23,6 +23,11 @@ dev = [
     "pip>=25.3",
     "ruff>=0.14.8",
 ]
+test = [
+    "pytest>=9.0.2",
+    "pytest-asyncio>=1.3.0",
+    "pytest-cov>=7.0.0",
+]
 
 [tool.uv]
 package = false
@@ -30,10 +35,16 @@ package = false
 [tool.pytest.ini_options]
 minversion = "6.0"
 asyncio_mode = "auto"
-
+filterwarnings = [
+    # Ignore deprecation warnings ONLY from the 'httplib2' library
+    "ignore::DeprecationWarning:httplib2.*",
+]
 [tool.coverage.run]
 source = ["recipes/", ]
-omit = ["*/tests/*", ]
+omit = [
+    "*/tests/*",
+    "recipes/presentation/streamlit.py"
+]
 
 [tool.coverage.report]
 skip_covered = false

@@ -2,13 +2,13 @@
 help:
     @just --list --unsorted
 
-# Run unit tests without coverage and API request tests.
+# Run unit tests without coverage.
 test:
-    uv run pytest -m 'not api_request' --spec
+    uv run pytest --cov
 
-# Run unit tests without API request tests.
+# Run unit tests with coverage.
 test-cov:
-    uv run pytest -m 'not api_request' --spec --cov
+    uv run pytest
 
 # Run linting and formating checks.
 lint:
@@ -47,6 +47,6 @@ fernet:
 reqs:
     uv export --no-dev
 
-# Run the development server.
-serve:
-    uv run uvicorn medtronic.presentation:app --host 0.0.0.0 --port 3000 --reload --log-level debug
+# Run the local server.
+run:
+    uv run streamlit run main.py
